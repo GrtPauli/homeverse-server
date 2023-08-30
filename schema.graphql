@@ -1,0 +1,47 @@
+# This Book type has two fields: title and author
+type Book {
+  title: String # returns a String
+  author: Author # returns an Author
+}
+
+type Author {
+ name: String! # Can't return null  
+ books: [Book] # A list of Books
+}
+
+# The Query type is a special object type that defines all of the top-level entry
+# points for queries that clients execute against your server.\
+type Query {
+  books: [Book]
+  authors: [Author]
+}
+
+# The Mutation type is similar in structure and purpose to the Query type.
+# Whereas the Query type defines entry points for read operations, the Mutation
+# type defines entry points for write operations.
+type Mutation {
+  addBook(title: String, author: String): Book
+}
+
+type Mutation {
+  createBlogPost(content: BlogPostContent!): Post
+  updateBlogPost(id: ID!, content: BlogPostContent!): Post
+}
+
+# Input types are special object types that allow you to provide hierarchical
+# data as arguments to fields (as opposed to providing only flat scalar arguments).
+input BlogPostContent {
+  title: String
+  body: String
+  media: [MediaDetails!]
+}
+
+input MediaDetails {
+  format: MediaFormat!
+  url: String!
+}
+
+enum MediaFormat {
+  IMAGE
+  VIDEO
+}
