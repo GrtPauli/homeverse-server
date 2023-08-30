@@ -1,0 +1,9 @@
+/node_modules
+
+private.key
+public.key
+yarn.lock
+package-lock.json
+.env
+.prettierrc
+.prettierignore
