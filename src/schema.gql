@@ -62,6 +62,7 @@ enum ContactStatus {
 }
 
 input CreateListingInput {
+  agent: String
   appliances: [String!]
   architecturalStyle: String
   basement: String
@@ -84,7 +85,7 @@ input CreateListingInput {
   oneFourBathrooms: Float
   oneTwoBathrooms: Float
   outdoorAmenities: [String!]
-  owner: ID
+  owner: String
   parking: [String!]
   photos: [IListingImageInput!]
   price: Float
@@ -102,6 +103,19 @@ input CreateListingInput {
   yearBuilt: Float
 }
 
+input CreateTourInput {
+  agent: String!
+  listedAt: Timestamp!
+  listingId: ID!
+  method: TourMethod!
+  price: Float!
+  propertyImg: IImageInput!
+  propertyLocation: ILocationInput!
+  tourScheduledDay: String!
+  tourScheduledTime: String!
+  tourist: String!
+}
+
 input CreateUserInput {
   email: String!
   firstname: String!
@@ -109,6 +123,24 @@ input CreateUserInput {
   password: String!
   profileId: ID
   userType: UserType
+}
+
+input GenerateZegoTokenInput {
+  appID: Float!
+  secret: String!
+  userId: String!
+}
+
+type IImage {
+  id: String!
+  name: String!
+  uri: String!
+}
+
+input IImageInput {
+  id: String!
+  name: String!
+  uri: String!
 }
 
 type IListingImage {
@@ -123,9 +155,41 @@ input IListingImageInput {
   uri: String!
 }
 
+type ILocation {
+  city: String!
+  country: String!
+  countryFlag: String!
+  state: String!
+}
+
+input ILocationInput {
+  city: String!
+  country: String!
+  countryFlag: String!
+  state: String!
+}
+
+type IReview {
+  createdAt: Timestamp!
+  image: IImage!
+  name: String!
+  rating: Float!
+  review: String!
+  updatedAt: Timestamp!
+}
+
+input IReviewInput {
+  createdAt: Timestamp!
+  image: IImageInput!
+  name: String!
+  rating: Float!
+  review: String!
+  updatedAt: Timestamp!
+}
+
 type Listing {
   _id: ID!
-  agent: ID
+  agent: String
   appliances: [String!]
   architecturalStyle: String
   basement: String
@@ -149,7 +213,7 @@ type Listing {
   oneFourBathrooms: Float
   oneTwoBathrooms: Float
   outdoorAmenities: [String!]
-  owner: ID
+  owner: String
   parking: [String!]
   photos: [IListingImage!]
   price: Float
@@ -206,13 +270,16 @@ type MessageRoom {
 type Mutation {
   acceptContactRequest(receiverId: String!, senderId: String!): Boolean!
   addNewComment(comment: CommentInput!): Boolean!
-  createListing(listing: CreateListingInput!): Listing!
-  createProfile(conversationListId: String!, userId: String!): Profile!
+  createListing(listing: CreateListingInput!, userId: String!): Listing!
+  createProfile(userId: String!): Profile!
+  createTourRequest(tour: CreateTourInput!): Tour!
   createUser(user: CreateUserInput!): User!
+  generateZegoToken(generateZegoTokenInput: GenerateZegoTokenInput!): String!
   login(user: LoginInput!): LoginResponse!
   sendContactRequest(receiver: ContactRequestInput!, sender: ContactRequestInput!): Boolean!
   sendMessage(message: SendMessageInput!): Boolean!
-  updateProfile(profile: UpdateProfileInput!): Boolean!
+  updateProfile(id: String!, profile: UpdateProfileInput!): Boolean!
+  updateTour(id: String!, tour: UpdateTourInput!): Tour!
   updateUser(user: UpdateUserInput!): User!
 }
 
@@ -226,12 +293,12 @@ type Profile {
   city: String
   contactRequests: [ContactRequest!]
   contacts: [Contact!]
-  conversationListId: ID!
   country: String
   countryFlag: String
   facebook: String
   inBusinessSince: String
   linkedIn: String
+  phone: String
   primaryPhone: String
   professionalTitle: String
   profileVideo: String
@@ -239,6 +306,7 @@ type Profile {
   state: String
   twitter: String
   userId: ID!
+  userType: UserType
   website: String
 }
 
@@ -249,8 +317,9 @@ type Query {
   getMe: User!
   getMessageRoom(id: String!): MessageRoom!
   getMyProfile: Profile!
+  getTours(agentId: String, touristId: String): [Tour!]!
   getUser(id: String!): User!
-  getUserListings: [Listing!]!
+  getUserListings(userId: String!): [Listing!]!
   getUserProfile(id: String!): Profile!
   recipe(id: ID!): Recipe
   sendOTP(number: String!): String!
@@ -279,6 +348,47 @@ The javascript `Date` as integer. Type represents date and time as number of mil
 """
 scalar Timestamp
 
+type Tour {
+  _id: ID!
+  agent: String!
+  createdAt: Timestamp!
+  listedAt: Timestamp!
+  listingId: ID!
+  method: TourMethod!
+  price: Float!
+  propertyImg: IImage!
+  propertyLocation: ILocation!
+  requestStatus: TourRequestStatus
+  tourReview: IReview
+  tourScheduledDay: String!
+  tourScheduledTime: String!
+  tourStatus: TourStatus
+  tourist: String!
+  updatedAt: Timestamp!
+  vcUrl: String
+}
+
+"""Two different methods used for touring homes"""
+enum TourMethod {
+  IN_PERSON
+  VIDEO_CALL
+}
+
+"""Representing the status of a tour request"""
+enum TourRequestStatus {
+  ACCEPTED
+  CANCELLED
+  PENDING
+}
+
+"""Representing the status of a tour"""
+enum TourStatus {
+  CANCELLED
+  COMPLETED
+  PENDING
+  REQUEST_NOT_ACCEPTED
+}
+
 input UpdateProfileInput {
   about: String
   blog: String
@@ -291,13 +401,22 @@ input UpdateProfileInput {
   facebook: String
   inBusinessSince: String
   linkedIn: String
+  phone: String
   primaryPhone: String
   professionalTitle: String
   profileVideo: String
   reviews: [String!]
   state: String
   twitter: String
+  userType: UserType
   website: String
+}
+
+input UpdateTourInput {
+  requestStatus: TourRequestStatus
+  tourReview: IReviewInput
+  tourStatus: TourStatus
+  vcUrl: String
 }
 
 input UpdateUserInput {

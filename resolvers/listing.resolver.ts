@@ -3,25 +3,24 @@ import { CreateListingInput, Listing } from "../schema/listing.schema";
 import ListingService from "../service/listing.service";
 import Context from "../types/context";
 
-
 export default class ListingResolver {
 
     constructor(private listingService: ListingService) {
         this.listingService = new ListingService()
     }   
 
-    @Authorized()
+    // @Authorized()
     @Mutation(() => Listing)
-    createListing(@Arg('listing') listing: CreateListingInput, @Ctx() context: Context){
-        const user = context.user
-        return this.listingService.createListing({ ...listing, user: user?._id ? user?._id : user?.sub  })
+    createListing(@Arg('userId') userId: string, @Arg('listing') listing: CreateListingInput){
+        // const user = context.user
+        return this.listingService.createListing({ ...listing, agent: userId })
     }
 
-    @Authorized()
+    // @Authorized()
     @Query(() => [Listing])
-    getUserListings(@Ctx() context: Context){
-        const user = context.user
-        const userId = user?._id ? user?._id : user?.sub
+    getUserListings(@Arg('userId') userId: string){
+        // const user = context.user
+        // const userId = user?._id ? user?._id : user?.sub
         return this.listingService.getUserListings(userId)
     }
 

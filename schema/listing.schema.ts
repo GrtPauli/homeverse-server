@@ -151,13 +151,13 @@ export class Listing {
     @prop({default: null})
     yearBuilt: number
 
-    @Field(() => ID, {nullable: true})
+    @Field(() => String, {nullable: true})
     @prop({default: null})
     owner: string
 
-    @Field(() => ID, {nullable: true})
-    @prop({default: null, ref: () => User})
-    agent: Ref<User>
+    @Field(() => String, {nullable: true})
+    @prop({default: null})
+    agent: string
 
     @Field(() => ListingStatus, { nullable: true })
     @prop({default: ListingStatus.ACTIVE})
@@ -329,8 +329,11 @@ export class CreateListingInput {
     @Field(() => Number, {nullable: true})
     yearBuilt: number
 
-    @Field(() => ID, {nullable: true})
+    @Field(() => String, {nullable: true})
     owner: string
+
+    @Field(() => String, {nullable: true})
+    agent: string
 
     @Field(() => Number, { nullable: true })
     bedrooms: number

@@ -11,9 +11,13 @@ export default class ProfileResolver {
     }
 
     @Mutation(() => Profile)
-    createProfile(@Arg('userId') userId: string, @Arg('conversationListId') conversationListId: string) {
-        return this.profileService.createProfile(userId, conversationListId)
+    createProfile(@Arg('userId') userId: string) {
+        return this.profileService.createProfile(userId)
     }
+
+    // createProfile(@Arg('userId') userId: string, @Arg('conversationListId') conversationListId: string) {
+    //     return this.profileService.createProfile(userId, conversationListId)
+    // }
 
     @Authorized()
     @Query(() => Profile)
@@ -23,12 +27,12 @@ export default class ProfileResolver {
         return this.profileService.getUserProfile(userId)
     }
 
-    @Authorized()
+    // @Authorized()
     @Mutation(() => Boolean)
-    updateProfile(@Arg('profile') profile: UpdateProfileInput, @Ctx() context: Context){
-        const currentUser = context.user
-        const userId = currentUser?._id ? currentUser?._id : currentUser?.sub
-        return this.profileService.updateProfile(userId, profile)
+    updateProfile(@Arg('id') id: string, @Arg('profile') profile: UpdateProfileInput){
+        // const currentUser = context.user
+        // const userId = currentUser?._id ? currentUser?._id : currentUser?.sub
+        return this.profileService.updateProfile(id, profile)
     }
 
     @Query(() => Profile)

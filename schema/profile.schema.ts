@@ -1,7 +1,7 @@
 import { ReturnModelType, getModelForClass, index, prop, queryMethod } from "@typegoose/typegoose";
 import { AsQueryMethod } from "@typegoose/typegoose/lib/types";
-import { Field, ID, InputType, Int, ObjectType } from "type-graphql";
-import { User } from "./user.schema";
+import { Field, ID, InputType, Int, ObjectType, registerEnumType } from "type-graphql";
+import { User, UserType } from "./user.schema";
 import { Contact, ContactRequest } from "./contact.schema";
 
 function findByUserId(this: ReturnModelType<typeof Profile, QueryHelpers>, userId: Profile['userId']) {
@@ -68,13 +68,21 @@ export class Profile {
     @prop({ required: true })
     userId: string
 
-    @Field(() => ID)
-    @prop({ required: true })
-    conversationListId: string
+    // @Field(() => ID)
+    // @prop({ required: true })
+    // conversationListId: string
 
     @Field(() => String, {nullable: true})
     @prop({default: null})
     about: string
+
+    @Field(() => String, {nullable: true})
+    @prop({default: null})
+    phone: string
+
+    @Field(() => UserType, { nullable: true })
+    @prop({default: UserType.BUYER_OR_SELLER})
+    userType: UserType
 
     // @Field(() => String, {nullable: true})
     // // @prop({default: process.env.DEFAULT_PHOTO })
@@ -172,6 +180,9 @@ export class CreateProfileInput {
 @InputType()
 export class UpdateProfileInput {
     @Field(() => String, {nullable: true})
+    phone: string
+
+    @Field(() => String, {nullable: true})
     about: string
 
     // @Field(() => String, {nullable: true})
@@ -179,6 +190,9 @@ export class UpdateProfileInput {
 
     @Field(() => [String], {nullable: true})
     reviews: string[]
+
+    @Field(() => UserType, { nullable: true })
+    userType: UserType
 
     @Field(() => String, {nullable: true})
     country: string

@@ -3,8 +3,8 @@ import { User } from "../schema/user.schema";
 
 
 export default class ListingService {
-
-    async createListing(listing: CreateListingInput & {user: User['_id']}) {
+    // async createListing(listing: CreateListingInput & {user: User['_id']}) {
+    async createListing(listing: CreateListingInput) {
         return ListingModel.create(listing)
     }
 
