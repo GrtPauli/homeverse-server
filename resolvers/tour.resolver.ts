@@ -1,6 +1,6 @@
 import { Arg, Mutation, Query, Resolver } from "type-graphql";
 import { TourService } from "../service/tour.service";
-import { CreateTourInput, Tour, UpdateTourInput } from "../schema/tour.schema";
+import { CreateTourInput, CreateTourRequestInput, GetTourInfoInput, GetToursInput, Tour, TourRequest, TourRequestStatus, UpdateTourInput, UpdateTourRequestStatusInput } from "../schema/tour.schema";
 
 
 @Resolver()
@@ -9,14 +9,24 @@ export default class TourResolver {
         this.tourService = new TourService()
     }
 
-    @Mutation(() => Tour)
-    createTourRequest(@Arg('tour') tour: CreateTourInput) {
-        return this.tourService.createTourRequest(tour)
+    @Mutation(() => TourRequest)
+    createTourRequest(@Arg('request') request: CreateTourRequestInput) {
+        return this.tourService.createTourRequest(request)
+    }
+
+    @Query(() => [TourRequest])
+    getTourRequests(@Arg('input') input: GetTourInfoInput){
+        return this.tourService.getTourRequests(input)
     }
 
     @Query(() => [Tour])
-    getTours(@Arg('agentId', { nullable: true }) agentId: string, @Arg('touristId', { nullable: true }) touristId: string){
-        return this.tourService.getTours(agentId, touristId)
+    getTours(@Arg('input') input: GetTourInfoInput){
+        return this.tourService.getTours(input)
+    }
+
+    @Mutation(() => TourRequest)
+    updateTourRequestStatus(@Arg('id') id: string, @Arg('request') request: UpdateTourRequestStatusInput, @Arg('vcRoomId', {nullable: true}) vcRoomId: string){
+        return this.tourService.updateTourRequestStatus(id, request, vcRoomId)
     }
 
     @Mutation(() => Tour)

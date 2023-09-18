@@ -1,46 +1,58 @@
+import { prop } from "@typegoose/typegoose"
 import { Field, ID, InputType, ObjectType, registerEnumType } from "type-graphql"
 
 
 @ObjectType()
-export class IImage {
+export class Image {
     @Field(() => String)
+    @prop({ required: true })
     id: string
 
     @Field(() => String)
+    @prop({ required: true })
     name: string
 
     @Field(() => String)
+    @prop({ required: true })
     uri: string
 }
 
 @ObjectType()
-export class ILocation {
+export class Location {
     @Field(() => String)
+    @prop({ required: true })
     country: string
 
     @Field(() => String)
+    @prop({ required: true })
     countryFlag: string
 
     @Field(() => String)
+    @prop({ required: true })
     state: string
 
     @Field(() => String)
+    @prop({ required: true })
     city: string
 }
 
 @ObjectType()
-export class IReview {
+export class Review {
     @Field(() => Number)
+    @prop({ required: true })
     rating: number
 
     @Field(() => String)
+    @prop({ required: true })
     review: string
 
     @Field(() => String)
+    @prop({ required: true })
     name: string
 
-    @Field(() => IImage)
-    image: IImage
+    @Field(() => Image)
+    @prop({ required: true })
+    image: Image
 
     @Field()
     createdAt: Date
@@ -52,7 +64,7 @@ export class IReview {
 //////---------- INPUT TYPES ----------///////
 
 @InputType()
-export class IImageInput {
+export class ImageInput {
     @Field(() => String)
     id: string
 
@@ -64,7 +76,7 @@ export class IImageInput {
 }
 
 @InputType()
-export class ILocationInput {
+export class LocationInput {
     @Field(() => String)
     country: string
 
@@ -79,7 +91,7 @@ export class ILocationInput {
 }
 
 @InputType()
-export class IReviewInput {
+export class ReviewInput {
     @Field(() => Number)
     rating: number
 
@@ -89,8 +101,8 @@ export class IReviewInput {
     @Field(() => String)
     name: string
 
-    @Field(() => IImageInput)
-    image: IImageInput
+    @Field(() => ImageInput)
+    image: ImageInput
 
     @Field()
     createdAt: Date

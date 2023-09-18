@@ -1,6 +1,6 @@
 import { getModelForClass, prop } from "@typegoose/typegoose";
 import { Field, ID, InputType, Int, ObjectType, registerEnumType } from "type-graphql";
-import { IImage, IImageInput, ILocation, ILocationInput, IReview, IReviewInput } from "./general.schema";
+import { Image, ImageInput, Location, LocationInput, Review, ReviewInput } from "./general.schema";
 import { AsQueryMethod, ReturnModelType } from "@typegoose/typegoose/lib/types";
 
 enum TourMethod {
@@ -8,14 +8,13 @@ enum TourMethod {
     VIDEO_CALL
 }
 
-enum TourRequestStatus {
+export enum TourRequestStatus {
     ACCEPTED,
     PENDING,
     CANCELLED
 }
 
 enum TourStatus {
-    REQUEST_NOT_ACCEPTED,
     COMPLETED,
     PENDING,
     CANCELLED
@@ -36,74 +35,74 @@ registerEnumType(TourStatus, {
     description: "Representing the status of a tour"
 })
 
-function findByAgentId(this: ReturnModelType<typeof Tour, QueryHelpers>, agent: Tour['agent']) {
-    return this.findOne({agent})
-}
+// function findByAgentId(this: ReturnModelType<typeof Tour, QueryHelpers>, agent: Tour['agent']) {
+//     return this.findOne({agent})
+// }
 
-interface QueryHelpers {
-    findByAgentId: AsQueryMethod<typeof findByAgentId>
-}
+// interface QueryHelpers {
+//     findByAgentId: AsQueryMethod<typeof findByAgentId>
+// }
 
 @ObjectType()
 export class Tour {
     @Field(() => ID)
     _id: string
 
-    @Field(() => IImage)
-    @prop({ required: true })
-    propertyImg: IImage
+    @Field(() => Image)
+    @prop({ required: true, _id: false })
+    propertyImg: Image
 
     @Field(() => ID)
     @prop({ required: true })
-    listingId: string
+    propertyId: string
 
     @Field(() => Number)
     @prop({ required: true })
     price: number
 
-    @Field(() => ILocation)
-    @prop({ required: true })
-    propertyLocation: ILocation
+    @Field(() => Location)
+    @prop({ required: true, _id: false })
+    propertyLocation: Location
 
     @Field()
     @prop({ required: true })
-    listedAt: Date
+    propertyListingDate: Date
 
     @Field(() => String)
     @prop({ required: true })
-    tourist: string
+    touristName: string
 
     @Field(() => String)
     @prop({ required: true })
-    agent: string
+    touristId: string
+
+    @Field(() => String)
+    @prop({ required: true })
+    agentName: string
+
+    @Field(() => String)
+    @prop({ required: true })
+    agentId: string
 
     @Field(() => String, { nullable: true })
     @prop({ default: null })
-    vcUrl: string
+    vcRoomId: string
 
     @Field(() => TourMethod)
     @prop({ required: true })
     method: TourMethod
 
-    @Field(() => TourRequestStatus, { nullable: true })
-    @prop({ default: TourRequestStatus.PENDING })
-    requestStatus: TourRequestStatus
-
     @Field(() => TourStatus, { nullable: true })
-    @prop({ default: TourStatus.REQUEST_NOT_ACCEPTED })
+    @prop({ default: TourStatus.PENDING })
     tourStatus: TourStatus
 
-    @Field(() => String)
+    @Field()
     @prop({ required: true })
-    tourScheduledDay: string
+    tourScheduledDate: Date
 
-    @Field(() => String)
-    @prop({ required: true })
-    tourScheduledTime: string
-
-    @Field(() => IReview, { nullable: true })
-    @prop({ default: null })
-    tourReview: IReview
+    @Field(() => Review, { nullable: true })
+    @prop({ default: null, _id: false })
+    tourReview: Review
 
     @Field()
     createdAt: Date
@@ -118,10 +117,106 @@ export const TourModel = getModelForClass<typeof Tour>(Tour, {
     }
 })
 
+@ObjectType()
+export class TourRequest {
+    @Field(() => ID)
+    _id: string
+
+    @Field(() => String)
+    @prop({ required: true })
+    touristName: string
+
+    @Field(() => String)
+    @prop({ required: true })
+    touristId: string
+
+    @Field(() => String)
+    @prop({ required: true })
+    agentName: string
+
+    @Field(() => String)
+    @prop({ required: true })
+    agentId: string
+
+    @Field()
+    @prop({ required: true })
+    tourScheduledDate: Date
+
+    @Field(() => TourMethod)
+    @prop({ required: true })
+    method: TourMethod
+
+    @Field(() => ID)
+    @prop({ required: true })
+    propertyId: string
+
+    @Field()
+    @prop({ required: true })
+    propertyListingDate: Date
+
+    @Field(() => TourRequestStatus, { nullable: true })
+    @prop({ default: TourRequestStatus.PENDING })
+    requestStatus: TourRequestStatus
+
+    @Field()
+    createdAt: Date
+
+    @Field()
+    updatedAt: Date
+}
+
+export const TourRequestModel = getModelForClass<typeof TourRequest>(TourRequest, {
+    schemaOptions: { 
+        timestamps : true
+    }
+})
+
+@InputType()
+export class CreateTourRequestInput {
+    @Field(() => String)
+    touristName: string
+
+    @Field(() => String)
+    touristId: string
+
+    @Field(() => String)
+    agentName: string
+
+    @Field(() => String)
+    agentId: string
+
+    @Field()
+    tourScheduledDate: Date
+
+    @Field(() => TourMethod)
+    method: TourMethod
+
+    @Field(() => ID)
+    propertyId: string
+
+    @Field()
+    propertyListingDate: Date
+}
+
+@InputType()
+export class UpdateTourRequestStatusInput {
+    @Field(() => TourRequestStatus)
+    requestStatus: TourRequestStatus
+}
+
+@InputType()
+export class GetTourInfoInput {
+    @Field(() => String, { nullable: true })
+    touristId: string
+
+    @Field(() => String, { nullable: true })
+    agentId: string
+}
+
 @InputType()
 export class CreateTourInput {
-    @Field(() => IImageInput)
-    propertyImg: IImageInput
+    @Field(() => ImageInput)
+    propertyImg: ImageInput
 
     @Field(() => ID)
     listingId: string
@@ -129,8 +224,8 @@ export class CreateTourInput {
     @Field(() => Number)
     price: number
 
-    @Field(() => ILocationInput)
-    propertyLocation: ILocationInput
+    @Field(() => LocationInput)
+    propertyLocation: LocationInput
 
     @Field()
     listedAt: Date
@@ -144,11 +239,8 @@ export class CreateTourInput {
     @Field(() => TourMethod)
     method: TourMethod
 
-    @Field(() => String)
-    tourScheduledDay: string
-
-    @Field(() => String)
-    tourScheduledTime: string
+    @Field()
+    tourScheduledDate: Date
 }
 
 @InputType()
@@ -162,6 +254,15 @@ export class UpdateTourInput {
     @Field(() => TourStatus, { nullable: true })
     tourStatus: TourStatus
 
-    @Field(() => IReviewInput, { nullable: true })
-    tourReview: IReviewInput
+    @Field(() => ReviewInput, { nullable: true })
+    tourReview: ReviewInput
+}
+
+@InputType()
+export class GetToursInput {
+    @Field(() => String, { nullable: true })
+    tourist: string
+
+    @Field(() => String, { nullable: true })
+    agent: string
 }

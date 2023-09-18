@@ -103,17 +103,15 @@ input CreateListingInput {
   yearBuilt: Float
 }
 
-input CreateTourInput {
-  agent: String!
-  listedAt: Timestamp!
-  listingId: ID!
+input CreateTourRequestInput {
+  agentId: String!
+  agentName: String!
   method: TourMethod!
-  price: Float!
-  propertyImg: IImageInput!
-  propertyLocation: ILocationInput!
-  tourScheduledDay: String!
-  tourScheduledTime: String!
-  tourist: String!
+  propertyId: ID!
+  propertyListingDate: Timestamp!
+  tourScheduledDate: Timestamp!
+  touristId: String!
+  touristName: String!
 }
 
 input CreateUserInput {
@@ -131,16 +129,9 @@ input GenerateZegoTokenInput {
   userId: String!
 }
 
-type IImage {
-  id: String!
-  name: String!
-  uri: String!
-}
-
-input IImageInput {
-  id: String!
-  name: String!
-  uri: String!
+input GetTourInfoInput {
+  agentId: String
+  touristId: String
 }
 
 type IListingImage {
@@ -155,36 +146,16 @@ input IListingImageInput {
   uri: String!
 }
 
-type ILocation {
-  city: String!
-  country: String!
-  countryFlag: String!
-  state: String!
-}
-
-input ILocationInput {
-  city: String!
-  country: String!
-  countryFlag: String!
-  state: String!
-}
-
-type IReview {
-  createdAt: Timestamp!
-  image: IImage!
+type Image {
+  id: String!
   name: String!
-  rating: Float!
-  review: String!
-  updatedAt: Timestamp!
+  uri: String!
 }
 
-input IReviewInput {
-  createdAt: Timestamp!
-  image: IImageInput!
+input ImageInput {
+  id: String!
   name: String!
-  rating: Float!
-  review: String!
-  updatedAt: Timestamp!
+  uri: String!
 }
 
 type Listing {
@@ -241,6 +212,13 @@ enum ListingStatus {
   UNLISTED
 }
 
+type Location {
+  city: String!
+  country: String!
+  countryFlag: String!
+  state: String!
+}
+
 input LoginInput {
   email: String!
   password: String!
@@ -272,7 +250,7 @@ type Mutation {
   addNewComment(comment: CommentInput!): Boolean!
   createListing(listing: CreateListingInput!, userId: String!): Listing!
   createProfile(userId: String!): Profile!
-  createTourRequest(tour: CreateTourInput!): Tour!
+  createTourRequest(request: CreateTourRequestInput!): TourRequest!
   createUser(user: CreateUserInput!): User!
   generateZegoToken(generateZegoTokenInput: GenerateZegoTokenInput!): String!
   login(user: LoginInput!): LoginResponse!
@@ -280,6 +258,7 @@ type Mutation {
   sendMessage(message: SendMessageInput!): Boolean!
   updateProfile(id: String!, profile: UpdateProfileInput!): Boolean!
   updateTour(id: String!, tour: UpdateTourInput!): Tour!
+  updateTourRequestStatus(id: String!, request: UpdateTourRequestStatusInput!, vcRoomId: String): TourRequest!
   updateUser(user: UpdateUserInput!): User!
 }
 
@@ -317,7 +296,8 @@ type Query {
   getMe: User!
   getMessageRoom(id: String!): MessageRoom!
   getMyProfile: Profile!
-  getTours(agentId: String, touristId: String): [Tour!]!
+  getTourRequests(input: GetTourInfoInput!): [TourRequest!]!
+  getTours(input: GetTourInfoInput!): [Tour!]!
   getUser(id: String!): User!
   getUserListings(userId: String!): [Listing!]!
   getUserProfile(id: String!): Profile!
@@ -331,6 +311,24 @@ type Recipe {
   description: String
   id: ID!
   title: String!
+}
+
+type Review {
+  createdAt: Timestamp!
+  image: Image!
+  name: String!
+  rating: Float!
+  review: String!
+  updatedAt: Timestamp!
+}
+
+input ReviewInput {
+  createdAt: Timestamp!
+  image: ImageInput!
+  name: String!
+  rating: Float!
+  review: String!
+  updatedAt: Timestamp!
 }
 
 input SendMessageInput {
@@ -350,28 +348,43 @@ scalar Timestamp
 
 type Tour {
   _id: ID!
-  agent: String!
+  agentId: String!
+  agentName: String!
   createdAt: Timestamp!
-  listedAt: Timestamp!
-  listingId: ID!
   method: TourMethod!
   price: Float!
-  propertyImg: IImage!
-  propertyLocation: ILocation!
-  requestStatus: TourRequestStatus
-  tourReview: IReview
-  tourScheduledDay: String!
-  tourScheduledTime: String!
+  propertyId: ID!
+  propertyImg: Image!
+  propertyListingDate: Timestamp!
+  propertyLocation: Location!
+  tourReview: Review
+  tourScheduledDate: Timestamp!
   tourStatus: TourStatus
-  tourist: String!
+  touristId: String!
+  touristName: String!
   updatedAt: Timestamp!
-  vcUrl: String
+  vcRoomId: String
 }
 
 """Two different methods used for touring homes"""
 enum TourMethod {
   IN_PERSON
   VIDEO_CALL
+}
+
+type TourRequest {
+  _id: ID!
+  agentId: String!
+  agentName: String!
+  createdAt: Timestamp!
+  method: TourMethod!
+  propertyId: ID!
+  propertyListingDate: Timestamp!
+  requestStatus: TourRequestStatus
+  tourScheduledDate: Timestamp!
+  touristId: String!
+  touristName: String!
+  updatedAt: Timestamp!
 }
 
 """Representing the status of a tour request"""
@@ -386,7 +399,6 @@ enum TourStatus {
   CANCELLED
   COMPLETED
   PENDING
-  REQUEST_NOT_ACCEPTED
 }
 
 input UpdateProfileInput {
@@ -414,9 +426,13 @@ input UpdateProfileInput {
 
 input UpdateTourInput {
   requestStatus: TourRequestStatus
-  tourReview: IReviewInput
+  tourReview: ReviewInput
   tourStatus: TourStatus
   vcUrl: String
+}
+
+input UpdateTourRequestStatusInput {
+  requestStatus: TourRequestStatus!
 }
 
 input UpdateUserInput {
