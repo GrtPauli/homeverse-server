@@ -2,6 +2,7 @@ import { Ref, ReturnModelType, getModelForClass, index, prop, queryMethod } from
 import { Field, Float, ID, InputType, Int, ObjectType, registerEnumType } from "type-graphql";
 import { User } from "./user.schema";
 import { AsQueryMethod } from "@typegoose/typegoose/lib/types";
+import { Location, LocationInput } from "./general.schema";
 
 enum HomeType {
     SINGLE_FAMILY = "Single Family",
@@ -52,10 +53,10 @@ enum ArchitecturalStyle {
 }
 
 enum ListingStatus {
-    ACTIVE = "Active",
-    SOLD = "Sold",
-    IN_TRANSACTION = "In Transaction",
-    UNLISTED = "Unlisted"
+    ACTIVE,
+    SOLD,
+    IN_TRANSACTION,
+    UNLISTED
 }
 
 registerEnumType(HomeType, {
@@ -127,21 +128,9 @@ export class Listing {
     @prop({default: null})
     description: string
 
-    @Field(() => String, {nullable: true})
+    @Field(() => Location, {nullable: true})
     @prop({default: null})
-    country: string
-
-    @Field(() => String, {nullable: true})
-    @prop({default: null})
-    countryFlag: string
-
-    @Field(() => String, {nullable: true})
-    @prop({default: null})
-    state: string
-
-    @Field(() => String, {nullable: true})
-    @prop({default: null})
-    city: string
+    location: Location
 
     @Field(() => [IListingImage], {nullable: true})
     @prop({default: null})
@@ -173,23 +162,11 @@ export class Listing {
 
     @Field(() => Number, { nullable: true })
     @prop({default: null})
-    totalGarages: number
+    garages: number
 
     @Field(() => Number, { nullable: true })
     @prop({default: null})
-    fullBathrooms: number 
-
-    @Field(() => Number, { nullable: true })
-    @prop({default: null})
-    threeFourBathrooms: number
-
-    @Field(() => Number, { nullable: true })
-    @prop({default: null})
-    oneTwoBathrooms: number
-
-    @Field(() => Number, { nullable: true })
-    @prop({default: null})
-    oneFourBathrooms: number
+    bathrooms: number 
 
     @Field(() => Number, { nullable: true })
     @prop({default: null})
@@ -311,17 +288,8 @@ export class CreateListingInput {
     @Field(() => String, {nullable: true})
     description: string
 
-    @Field(() => String, {nullable: true})
-    country: string
-
-    @Field(() => String, {nullable: true})
-    countryFlag: string
-
-    @Field(() => String, {nullable: true})
-    state: string
-
-    @Field(() => String, {nullable: true})
-    city: string
+    @Field(() => LocationInput, {nullable: true})
+    location: LocationInput
 
     @Field(() => [IListingImageInput], {nullable: true})
     photos: IListingImageInput[]
@@ -342,19 +310,115 @@ export class CreateListingInput {
     totalRooms: number
 
     @Field(() => Number, { nullable: true })
-    totalGarages: number
+    garages: number
 
     @Field(() => Number, { nullable: true })
-    fullBathrooms: number 
+    bathrooms: number 
 
     @Field(() => Number, { nullable: true })
-    threeFourBathrooms: number
+    propertySize: number
+
+    @Field(() => String, { nullable: true })
+    propertySizeUnit: string
 
     @Field(() => Number, { nullable: true })
-    oneTwoBathrooms: number
+    basementSqFt: number
 
     @Field(() => Number, { nullable: true })
-    oneFourBathrooms: number
+    garageSqFt: number
+
+    @Field(() => String, { nullable: true })
+    relatedWebsite: string
+
+    @Field(() => String, { nullable: true })
+    virtualTourURL: string
+
+    @Field(() => String, { nullable: true })
+    basement: string
+
+    @Field(() => [String], { nullable: true })
+    rooms: string[]
+
+    @Field(() => [String], { nullable: true })
+    floorCovering: string[]
+
+    @Field(() => [String], { nullable: true })
+    indoorFeatures: string[]
+
+    @Field(() => [String], { nullable: true })
+    appliances: string[]
+
+    @Field(() => [String], { nullable: true })
+    heatingType: string[]
+
+    @Field(() => [String], { nullable: true })
+    heatingFuel: string[]
+
+    @Field(() => [String], { nullable: true })
+    coolingType: string[]
+
+    @Field(() => [String], { nullable: true })
+    parking: string[]
+
+    @Field(() => [String], { nullable: true })
+    view: string[]
+
+    @Field(() => [String], { nullable: true })
+    roof: string[]
+
+    @Field(() => [String], { nullable: true })
+    exterior: string[]
+
+    @Field(() => [String], { nullable: true })
+    buildingAmenities: string[]
+
+    @Field(() => String, { nullable: true })
+    architecturalStyle: string
+
+    @Field(() => [String], { nullable: true })
+    outdoorAmenities: string[]
+}
+
+@InputType()
+export class UpdateListingInput {
+    @Field(() => Number, {nullable: true})
+    price: number
+
+    @Field(() => String, {nullable: true})
+    homeType: string
+
+    @Field(() => String, {nullable: true})
+    description: string
+
+    @Field(() => LocationInput, {nullable: true})
+    location: LocationInput
+
+    @Field(() => [IListingImageInput], {nullable: true})
+    photos: IListingImageInput[]
+
+    @Field(() => Number, {nullable: true})
+    yearBuilt: number
+
+    @Field(() => String, {nullable: true})
+    owner: string
+
+    @Field(() => String, {nullable: true})
+    agent: string
+
+    @Field(() => ListingStatus, { nullable: true })
+    status: ListingStatus
+
+    @Field(() => Number, { nullable: true })
+    bedrooms: number
+
+    @Field(() => Number, { nullable: true })
+    totalRooms: number
+
+    @Field(() => Number, { nullable: true })
+    garages: number
+
+    @Field(() => Number, { nullable: true })
+    bathrooms: number 
 
     @Field(() => Number, { nullable: true })
     propertySize: number
@@ -424,4 +488,25 @@ export class CreateListingInput {
 export class GetListingInput {
     @Field(() => ID)
     listingId: string
+}
+
+@InputType()
+export class ListingFilterInput {
+    @Field(() => Number, {nullable: true})
+    minPrice: number
+
+    @Field(() => Number, {nullable: true})
+    maxPrice: number
+
+    @Field(() => String, {nullable: true})
+    state: string
+
+    @Field(() => String, {nullable: true})
+    city: string
+
+    @Field(() => String, {nullable: true})
+    bedrooms: string
+
+    @Field(() => String, {nullable: true})
+    bathrooms: string
 }

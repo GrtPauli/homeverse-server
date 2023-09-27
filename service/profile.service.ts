@@ -1,4 +1,4 @@
-import { CreateProfileInput, Profile, ProfileModel, UpdateProfileInput } from "../schema/profile.schema";
+import { CreateProfileInput, FilterProfileInput, Profile, ProfileModel, UpdateProfileInput } from "../schema/profile.schema";
 import { UserModel } from "../schema/user.schema";
 
 
@@ -13,6 +13,10 @@ class ProfileService {
 
     async getUserProfile(userId: string) {
         return ProfileModel.find().findByUserId(userId)
+    }
+
+    async getProfiles(filter: FilterProfileInput){
+        return ProfileModel.find(filter)
     }
 
     async updateProfile(userId: string, profile: UpdateProfileInput){ 

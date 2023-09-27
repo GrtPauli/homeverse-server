@@ -67,23 +67,20 @@ input CreateListingInput {
   architecturalStyle: String
   basement: String
   basementSqFt: Float
+  bathrooms: Float
   bedrooms: Float
   buildingAmenities: [String!]
-  city: String
   coolingType: [String!]
-  country: String
-  countryFlag: String
   description: String
   exterior: [String!]
   floorCovering: [String!]
-  fullBathrooms: Float
   garageSqFt: Float
+  garages: Float
   heatingFuel: [String!]
   heatingType: [String!]
   homeType: String
   indoorFeatures: [String!]
-  oneFourBathrooms: Float
-  oneTwoBathrooms: Float
+  location: LocationInput
   outdoorAmenities: [String!]
   owner: String
   parking: [String!]
@@ -94,13 +91,25 @@ input CreateListingInput {
   relatedWebsite: String
   roof: [String!]
   rooms: [String!]
-  state: String
-  threeFourBathrooms: Float
-  totalGarages: Float
   totalRooms: Float
   view: [String!]
   virtualTourURL: String
   yearBuilt: Float
+}
+
+input CreateTourInput {
+  agentId: String!
+  agentName: String!
+  agentPhoto: String!
+  method: TourMethod!
+  propertyId: ID!
+  propertyListingDate: Timestamp!
+  tourScheduledDate: Timestamp!
+  tourStatus: TourStatus!
+  touristId: String!
+  touristName: String!
+  touristPhoto: String!
+  vcRoomId: String
 }
 
 input CreateTourRequestInput {
@@ -123,6 +132,14 @@ input CreateUserInput {
   userType: UserType
 }
 
+input FilterProfileInput {
+  city: String
+  country: String
+  displayName: String
+  state: String
+  userType: UserType
+}
+
 input GenerateZegoTokenInput {
   appID: Float!
   secret: String!
@@ -132,6 +149,11 @@ input GenerateZegoTokenInput {
 input GetTourInfoInput {
   agentId: String
   touristId: String
+}
+
+type HomePage {
+  newListings: [Listing!]!
+  topAgents: [Profile!]!
 }
 
 type IListingImage {
@@ -146,18 +168,6 @@ input IListingImageInput {
   uri: String!
 }
 
-type Image {
-  id: String!
-  name: String!
-  uri: String!
-}
-
-input ImageInput {
-  id: String!
-  name: String!
-  uri: String!
-}
-
 type Listing {
   _id: ID!
   agent: String
@@ -165,24 +175,21 @@ type Listing {
   architecturalStyle: String
   basement: String
   basementSqFt: Float
+  bathrooms: Float
   bedrooms: Float
   buildingAmenities: [String!]
-  city: String
   coolingType: [String!]
-  country: String
-  countryFlag: String
   createdAt: Timestamp!
   description: String
   exterior: [String!]
   floorCovering: [String!]
-  fullBathrooms: Float
   garageSqFt: Float
+  garages: Float
   heatingFuel: [String!]
   heatingType: [String!]
   homeType: String
   indoorFeatures: [String!]
-  oneFourBathrooms: Float
-  oneTwoBathrooms: Float
+  location: Location
   outdoorAmenities: [String!]
   owner: String
   parking: [String!]
@@ -193,15 +200,21 @@ type Listing {
   relatedWebsite: String
   roof: [String!]
   rooms: [String!]
-  state: String
   status: ListingStatus
-  threeFourBathrooms: Float
-  totalGarages: Float
   totalRooms: Float
   updatedAt: Timestamp!
   view: [String!]
   virtualTourURL: String
   yearBuilt: Float
+}
+
+input ListingFilterInput {
+  bathrooms: String
+  bedrooms: String
+  city: String
+  maxPrice: Float
+  minPrice: Float
+  state: String
 }
 
 """Different units for determing the property size"""
@@ -213,10 +226,17 @@ enum ListingStatus {
 }
 
 type Location {
+  address: String!
   city: String!
-  country: String!
-  countryFlag: String!
   state: String!
+  zip: Float
+}
+
+input LocationInput {
+  address: String!
+  city: String!
+  state: String!
+  zip: Float!
 }
 
 input LoginInput {
@@ -250,12 +270,14 @@ type Mutation {
   addNewComment(comment: CommentInput!): Boolean!
   createListing(listing: CreateListingInput!, userId: String!): Listing!
   createProfile(userId: String!): Profile!
+  createTour(tour: CreateTourInput!): Tour!
   createTourRequest(request: CreateTourRequestInput!): TourRequest!
   createUser(user: CreateUserInput!): User!
   generateZegoToken(generateZegoTokenInput: GenerateZegoTokenInput!): String!
   login(user: LoginInput!): LoginResponse!
   sendContactRequest(receiver: ContactRequestInput!, sender: ContactRequestInput!): Boolean!
   sendMessage(message: SendMessageInput!): Boolean!
+  updateListing(id: String!, listing: UpdateListingInput!): Listing!
   updateProfile(id: String!, profile: UpdateProfileInput!): Boolean!
   updateTour(id: String!, tour: UpdateTourInput!): Tour!
   updateTourRequestStatus(id: String!, request: UpdateTourRequestStatusInput!, vcRoomId: String): TourRequest!
@@ -265,6 +287,7 @@ type Mutation {
 type Profile {
   _id: ID!
   about: String
+  address: String
   blog: String
   brokerageAddress: String
   brokerageName: String
@@ -274,10 +297,13 @@ type Profile {
   contacts: [Contact!]
   country: String
   countryFlag: String
+  displayName: String
   facebook: String
   inBusinessSince: String
+  languages: [String!]
   linkedIn: String
   phone: String
+  photo: String
   primaryPhone: String
   professionalTitle: String
   profileVideo: String
@@ -292,15 +318,17 @@ type Profile {
 type Query {
   getAgents: [User!]!
   getListing(id: String!): Listing!
-  getListings: [Listing!]!
+  getListings(filter: ListingFilterInput): [Listing!]!
   getMe: User!
   getMessageRoom(id: String!): MessageRoom!
   getMyProfile: Profile!
+  getProfiles(filter: FilterProfileInput!): [Profile!]!
   getTourRequests(input: GetTourInfoInput!): [TourRequest!]!
   getTours(input: GetTourInfoInput!): [Tour!]!
   getUser(id: String!): User!
   getUserListings(userId: String!): [Listing!]!
   getUserProfile(id: String!): Profile!
+  homePage: HomePage!
   recipe(id: ID!): Recipe
   sendOTP(number: String!): String!
   verifyOTP(number: String!, otp: String!): String!
@@ -314,21 +342,21 @@ type Recipe {
 }
 
 type Review {
+  comment: String!
   createdAt: Timestamp!
-  image: Image!
   name: String!
+  photo: String!
   rating: Float!
-  review: String!
   updatedAt: Timestamp!
 }
 
 input ReviewInput {
-  createdAt: Timestamp!
-  image: ImageInput!
+  comment: String!
+  createdAt: Timestamp
   name: String!
+  photo: String!
   rating: Float!
-  review: String!
-  updatedAt: Timestamp!
+  updatedAt: Timestamp
 }
 
 input SendMessageInput {
@@ -350,18 +378,17 @@ type Tour {
   _id: ID!
   agentId: String!
   agentName: String!
+  agentPhoto: String!
   createdAt: Timestamp!
   method: TourMethod!
-  price: Float!
   propertyId: ID!
-  propertyImg: Image!
   propertyListingDate: Timestamp!
-  propertyLocation: Location!
   tourReview: Review
   tourScheduledDate: Timestamp!
-  tourStatus: TourStatus
+  tourStatus: TourStatus!
   touristId: String!
   touristName: String!
+  touristPhoto: String!
   updatedAt: Timestamp!
   vcRoomId: String
 }
@@ -399,10 +426,49 @@ enum TourStatus {
   CANCELLED
   COMPLETED
   PENDING
+  REQUEST
+}
+
+input UpdateListingInput {
+  agent: String
+  appliances: [String!]
+  architecturalStyle: String
+  basement: String
+  basementSqFt: Float
+  bathrooms: Float
+  bedrooms: Float
+  buildingAmenities: [String!]
+  coolingType: [String!]
+  description: String
+  exterior: [String!]
+  floorCovering: [String!]
+  garageSqFt: Float
+  garages: Float
+  heatingFuel: [String!]
+  heatingType: [String!]
+  homeType: String
+  indoorFeatures: [String!]
+  location: LocationInput
+  outdoorAmenities: [String!]
+  owner: String
+  parking: [String!]
+  photos: [IListingImageInput!]
+  price: Float
+  propertySize: Float
+  propertySizeUnit: String
+  relatedWebsite: String
+  roof: [String!]
+  rooms: [String!]
+  status: ListingStatus
+  totalRooms: Float
+  view: [String!]
+  virtualTourURL: String
+  yearBuilt: Float
 }
 
 input UpdateProfileInput {
   about: String
+  address: String
   blog: String
   brokerageAddress: String
   brokerageName: String
@@ -410,10 +476,13 @@ input UpdateProfileInput {
   city: String
   country: String
   countryFlag: String
+  displayName: String
   facebook: String
   inBusinessSince: String
+  languages: [String!]
   linkedIn: String
   phone: String
+  photo: String
   primaryPhone: String
   professionalTitle: String
   profileVideo: String
@@ -425,10 +494,9 @@ input UpdateProfileInput {
 }
 
 input UpdateTourInput {
-  requestStatus: TourRequestStatus
   tourReview: ReviewInput
   tourStatus: TourStatus
-  vcUrl: String
+  vcRoomId: String
 }
 
 input UpdateTourRequestStatusInput {

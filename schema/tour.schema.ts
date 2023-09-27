@@ -17,7 +17,8 @@ export enum TourRequestStatus {
 enum TourStatus {
     COMPLETED,
     PENDING,
-    CANCELLED
+    CANCELLED,
+    REQUEST
 }
 
 registerEnumType(TourMethod, {
@@ -48,21 +49,9 @@ export class Tour {
     @Field(() => ID)
     _id: string
 
-    @Field(() => Image)
-    @prop({ required: true, _id: false })
-    propertyImg: Image
-
     @Field(() => ID)
     @prop({ required: true })
     propertyId: string
-
-    @Field(() => Number)
-    @prop({ required: true })
-    price: number
-
-    @Field(() => Location)
-    @prop({ required: true, _id: false })
-    propertyLocation: Location
 
     @Field()
     @prop({ required: true })
@@ -78,11 +67,19 @@ export class Tour {
 
     @Field(() => String)
     @prop({ required: true })
+    touristPhoto: string
+
+    @Field(() => String)
+    @prop({ required: true })
     agentName: string
 
     @Field(() => String)
     @prop({ required: true })
     agentId: string
+
+    @Field(() => String)
+    @prop({ required: true })
+    agentPhoto: string
 
     @Field(() => String, { nullable: true })
     @prop({ default: null })
@@ -92,8 +89,8 @@ export class Tour {
     @prop({ required: true })
     method: TourMethod
 
-    @Field(() => TourStatus, { nullable: true })
-    @prop({ default: TourStatus.PENDING })
+    @Field(() => TourStatus)
+    @prop({ required: true })
     tourStatus: TourStatus
 
     @Field()
@@ -215,29 +212,38 @@ export class GetTourInfoInput {
 
 @InputType()
 export class CreateTourInput {
-    @Field(() => ImageInput)
-    propertyImg: ImageInput
-
     @Field(() => ID)
-    listingId: string
-
-    @Field(() => Number)
-    price: number
-
-    @Field(() => LocationInput)
-    propertyLocation: LocationInput
+    propertyId: string
 
     @Field()
-    listedAt: Date
+    propertyListingDate: Date
 
     @Field(() => String)
-    tourist: string
+    touristName: string
 
     @Field(() => String)
-    agent: string
+    touristId: string
+
+    @Field(() => String)
+    touristPhoto: string
+
+    @Field(() => String)
+    agentName: string
+
+    @Field(() => String)
+    agentId: string
+
+    @Field(() => String)
+    agentPhoto: string
+
+    @Field(() => String, { nullable: true })
+    vcRoomId: string
 
     @Field(() => TourMethod)
     method: TourMethod
+
+    @Field(() => TourStatus)
+    tourStatus: TourStatus
 
     @Field()
     tourScheduledDate: Date
@@ -246,10 +252,7 @@ export class CreateTourInput {
 @InputType()
 export class UpdateTourInput {
     @Field(() => String, { nullable: true })
-    vcUrl: string
-
-    @Field(() => TourRequestStatus, { nullable: true })
-    requestStatus: TourRequestStatus
+    vcRoomId: string
 
     @Field(() => TourStatus, { nullable: true })
     tourStatus: TourStatus

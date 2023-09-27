@@ -1,5 +1,5 @@
 import { Arg, Authorized, Ctx, Mutation, Query } from "type-graphql";
-import { CreateListingInput, Listing } from "../schema/listing.schema";
+import { CreateListingInput, Listing, ListingFilterInput, UpdateListingInput } from "../schema/listing.schema";
 import ListingService from "../service/listing.service";
 import Context from "../types/context";
 
@@ -25,8 +25,13 @@ export default class ListingResolver {
     }
 
     @Query(() => [Listing])
-    getListings(){
-        return this.listingService.getListings()
+    getListings(@Arg('filter', {nullable: true}) filter?: ListingFilterInput){
+        return this.listingService.getListings(filter)
+    }
+
+    @Mutation(() => Listing)
+    updateListing(@Arg('id') id: string, @Arg('listing') listing: UpdateListingInput){
+        return this.listingService.updateListing(id, listing)
     }
 
     @Query(() => Listing)

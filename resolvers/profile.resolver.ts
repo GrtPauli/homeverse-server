@@ -1,6 +1,6 @@
 import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import ProfileService from "../service/profile.service";
-import { CreateProfileInput, Profile, UpdateProfileInput } from "../schema/profile.schema";
+import { CreateProfileInput, FilterProfileInput, Profile, UpdateProfileInput } from "../schema/profile.schema";
 import Context from "../types/context";
 
 
@@ -38,5 +38,10 @@ export default class ProfileResolver {
     @Query(() => Profile)
     getUserProfile(@Arg('id') id: string){
         return this.profileService.getUserProfile(id)
+    }
+
+    @Query(() => [Profile])
+    getProfiles(@Arg('filter') filter: FilterProfileInput){
+        return this.profileService.getProfiles(filter)
     }
 }

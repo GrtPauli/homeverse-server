@@ -1,10 +1,14 @@
 import { ListingModel } from "../schema/listing.schema";
-import { CreateTourRequestInput, TourModel, UpdateTourInput, GetToursInput, TourRequestModel, GetTourInfoInput, TourRequestStatus, UpdateTourRequestStatusInput } from "../schema/tour.schema";
+import { CreateTourRequestInput, TourModel, UpdateTourInput, GetToursInput, TourRequestModel, GetTourInfoInput, TourRequestStatus, UpdateTourRequestStatusInput, CreateTourInput } from "../schema/tour.schema";
 
 
 export class TourService {
     async createTourRequest(request: CreateTourRequestInput) {
         return TourRequestModel.create(request)
+    }
+
+    async createTour(tour: CreateTourInput){
+        return TourModel.create(tour)
     }
 
     async getTourRequests(input: GetTourInfoInput) {

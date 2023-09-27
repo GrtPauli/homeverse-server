@@ -9,6 +9,11 @@ export default class TourResolver {
         this.tourService = new TourService()
     }
 
+    @Mutation(() => Tour)
+    createTour(@Arg('tour') tour: CreateTourInput){
+        return this.tourService.createTour(tour)
+    }
+
     @Mutation(() => TourRequest)
     createTourRequest(@Arg('request') request: CreateTourRequestInput) {
         return this.tourService.createTourRequest(request)

@@ -76,6 +76,18 @@ export class Profile {
     @prop({default: null})
     about: string
 
+    @Field(() => [String], {nullable: true})
+    @prop({default: null})
+    languages: string[]
+
+    @Field(() => String, {nullable: true})
+    @prop({default: null})
+    address: string
+
+    @Field(() => String, {nullable: true})
+    @prop({default: null})
+    displayName: string
+
     @Field(() => String, {nullable: true})
     @prop({default: null})
     phone: string
@@ -84,10 +96,9 @@ export class Profile {
     @prop({default: UserType.BUYER_OR_SELLER})
     userType: UserType
 
-    // @Field(() => String, {nullable: true})
-    // // @prop({default: process.env.DEFAULT_PHOTO })
-    // @prop({default: null})
-    // photo: string
+    @Field(() => String, {nullable: true})
+    @prop({default: null})
+    photo: string
 
     @Field(() => [Contact], {nullable: true})
     @prop({default: null})
@@ -178,15 +189,42 @@ export class CreateProfileInput {
 }
 
 @InputType()
+export class FilterProfileInput{
+    @Field(() => String, {nullable: true})
+    displayName: string
+
+    @Field(() => UserType, { nullable: true })
+    userType: UserType
+
+    @Field(() => String, {nullable: true})
+    country: string
+
+    @Field(() => String, {nullable: true})
+    state: string
+
+    @Field(() => String, {nullable: true})
+    city: string
+}
+
+@InputType()
 export class UpdateProfileInput {
+    @Field(() => [String], {nullable: true})
+    languages: string[]
+
+    @Field(() => String, {nullable: true})
+    address: string
+
+    @Field(() => String, {nullable: true})
+    displayName: string
+
     @Field(() => String, {nullable: true})
     phone: string
 
     @Field(() => String, {nullable: true})
     about: string
 
-    // @Field(() => String, {nullable: true})
-    // photo: string
+    @Field(() => String, {nullable: true})
+    photo: string
 
     @Field(() => [String], {nullable: true})
     reviews: string[]

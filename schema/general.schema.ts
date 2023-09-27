@@ -1,5 +1,7 @@
 import { prop } from "@typegoose/typegoose"
 import { Field, ID, InputType, ObjectType, registerEnumType } from "type-graphql"
+import { Listing } from "./listing.schema"
+import { Profile } from "./profile.schema"
 
 
 @ObjectType()
@@ -21,19 +23,19 @@ export class Image {
 export class Location {
     @Field(() => String)
     @prop({ required: true })
-    country: string
-
-    @Field(() => String)
-    @prop({ required: true })
-    countryFlag: string
-
-    @Field(() => String)
-    @prop({ required: true })
     state: string
 
     @Field(() => String)
     @prop({ required: true })
     city: string
+
+    @Field(() => String)
+    @prop({ required: true })
+    address: string
+
+    @Field(() => Number, {nullable: true})
+    @prop({default: null})
+    zip: number
 }
 
 @ObjectType()
@@ -44,21 +46,32 @@ export class Review {
 
     @Field(() => String)
     @prop({ required: true })
-    review: string
+    comment: string
 
     @Field(() => String)
     @prop({ required: true })
     name: string
 
-    @Field(() => Image)
+    @Field(() => String)
     @prop({ required: true })
-    image: Image
+    photo: string
 
     @Field()
+    @prop({ required: true })
     createdAt: Date
 
     @Field()
+    @prop({ required: true })
     updatedAt: Date
+}
+
+@ObjectType()
+export class HomePage {
+    @Field(() => [Listing])
+    newListings: Listing[]
+
+    @Field(() => [Profile])
+    topAgents: Profile[]
 }
 
 //////---------- INPUT TYPES ----------///////
@@ -78,16 +91,16 @@ export class ImageInput {
 @InputType()
 export class LocationInput {
     @Field(() => String)
-    country: string
-
-    @Field(() => String)
-    countryFlag: string
-
-    @Field(() => String)
     state: string
 
     @Field(() => String)
     city: string
+
+    @Field(() => String)
+    address: string
+
+    @Field(() => Number)
+    zip: number
 }
 
 @InputType()
@@ -96,18 +109,18 @@ export class ReviewInput {
     rating: number
 
     @Field(() => String)
-    review: string
+    comment: string
 
     @Field(() => String)
     name: string
 
-    @Field(() => ImageInput)
-    image: ImageInput
+    @Field(() => String)
+    photo: string
 
-    @Field()
+    @Field({nullable: true})
     createdAt: Date
 
-    @Field()
+    @Field({nullable: true})
     updatedAt: Date
 }
 
