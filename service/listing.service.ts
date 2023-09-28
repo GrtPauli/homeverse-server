@@ -1,4 +1,4 @@
-import { CreateListingInput, Listing, ListingFilterInput, ListingModel, UpdateListingInput } from "../schema/listing.schema";
+import { CreateListingInput, Listing, ListingFilterInput, ListingModel, UpdateListingInput, UserListingFilter } from "../schema/listing.schema";
 import { User } from "../schema/user.schema";
 
 
@@ -8,8 +8,8 @@ export default class ListingService {
         return ListingModel.create(listing)
     }
 
-    async getUserListings(userId: string) {
-        return ListingModel.find().findByUserId(userId).sort({'createdAt': -1})
+    async getUserListings(filter: UserListingFilter) {
+        return ListingModel.find(filter).sort({'createdAt': -1})
     }
 
     async updateListing(id: string, listing: UpdateListingInput){

@@ -62,7 +62,9 @@ enum ContactStatus {
 }
 
 input CreateListingInput {
-  agent: String
+  address: String
+  agent: ListingParticipantInput
+  agentId: String
   appliances: [String!]
   architecturalStyle: String
   basement: String
@@ -70,6 +72,7 @@ input CreateListingInput {
   bathrooms: Float
   bedrooms: Float
   buildingAmenities: [String!]
+  city: String
   coolingType: [String!]
   description: String
   exterior: [String!]
@@ -80,9 +83,9 @@ input CreateListingInput {
   heatingType: [String!]
   homeType: String
   indoorFeatures: [String!]
-  location: LocationInput
   outdoorAmenities: [String!]
-  owner: String
+  owner: ListingParticipantInput
+  ownerId: String
   parking: [String!]
   photos: [IListingImageInput!]
   price: Float
@@ -91,10 +94,12 @@ input CreateListingInput {
   relatedWebsite: String
   roof: [String!]
   rooms: [String!]
+  state: String
   totalRooms: Float
   view: [String!]
   virtualTourURL: String
   yearBuilt: Float
+  zip: Float
 }
 
 input CreateTourInput {
@@ -170,7 +175,9 @@ input IListingImageInput {
 
 type Listing {
   _id: ID!
-  agent: String
+  address: String
+  agent: ListingParticipant
+  agentId: String
   appliances: [String!]
   architecturalStyle: String
   basement: String
@@ -178,6 +185,7 @@ type Listing {
   bathrooms: Float
   bedrooms: Float
   buildingAmenities: [String!]
+  city: String
   coolingType: [String!]
   createdAt: Timestamp!
   description: String
@@ -189,9 +197,9 @@ type Listing {
   heatingType: [String!]
   homeType: String
   indoorFeatures: [String!]
-  location: Location
   outdoorAmenities: [String!]
-  owner: String
+  owner: ListingParticipant
+  ownerId: String
   parking: [String!]
   photos: [IListingImage!]
   price: Float
@@ -200,12 +208,14 @@ type Listing {
   relatedWebsite: String
   roof: [String!]
   rooms: [String!]
+  state: String
   status: ListingStatus
   totalRooms: Float
   updatedAt: Timestamp!
   view: [String!]
   virtualTourURL: String
   yearBuilt: Float
+  zip: Float
 }
 
 input ListingFilterInput {
@@ -217,26 +227,24 @@ input ListingFilterInput {
   state: String
 }
 
+type ListingParticipant {
+  id: String!
+  name: String!
+  photo: String!
+}
+
+input ListingParticipantInput {
+  id: String!
+  name: String!
+  photo: String!
+}
+
 """Different units for determing the property size"""
 enum ListingStatus {
   ACTIVE
   IN_TRANSACTION
   SOLD
   UNLISTED
-}
-
-type Location {
-  address: String!
-  city: String!
-  state: String!
-  zip: Float
-}
-
-input LocationInput {
-  address: String!
-  city: String!
-  state: String!
-  zip: Float!
 }
 
 input LoginInput {
@@ -268,7 +276,7 @@ type MessageRoom {
 type Mutation {
   acceptContactRequest(receiverId: String!, senderId: String!): Boolean!
   addNewComment(comment: CommentInput!): Boolean!
-  createListing(listing: CreateListingInput!, userId: String!): Listing!
+  createListing(listing: CreateListingInput!): Listing!
   createProfile(userId: String!): Profile!
   createTour(tour: CreateTourInput!): Tour!
   createTourRequest(request: CreateTourRequestInput!): TourRequest!
@@ -326,7 +334,7 @@ type Query {
   getTourRequests(input: GetTourInfoInput!): [TourRequest!]!
   getTours(input: GetTourInfoInput!): [Tour!]!
   getUser(id: String!): User!
-  getUserListings(userId: String!): [Listing!]!
+  getUserListings(filter: UserListingFilter!): [Listing!]!
   getUserProfile(id: String!): Profile!
   homePage: HomePage!
   recipe(id: ID!): Recipe
@@ -430,7 +438,9 @@ enum TourStatus {
 }
 
 input UpdateListingInput {
-  agent: String
+  address: String
+  agent: ListingParticipantInput
+  agentId: String
   appliances: [String!]
   architecturalStyle: String
   basement: String
@@ -438,6 +448,7 @@ input UpdateListingInput {
   bathrooms: Float
   bedrooms: Float
   buildingAmenities: [String!]
+  city: String
   coolingType: [String!]
   description: String
   exterior: [String!]
@@ -448,9 +459,9 @@ input UpdateListingInput {
   heatingType: [String!]
   homeType: String
   indoorFeatures: [String!]
-  location: LocationInput
   outdoorAmenities: [String!]
-  owner: String
+  owner: ListingParticipantInput
+  ownerId: String
   parking: [String!]
   photos: [IListingImageInput!]
   price: Float
@@ -459,11 +470,13 @@ input UpdateListingInput {
   relatedWebsite: String
   roof: [String!]
   rooms: [String!]
+  state: String
   status: ListingStatus
   totalRooms: Float
   view: [String!]
   virtualTourURL: String
   yearBuilt: Float
+  zip: Float
 }
 
 input UpdateProfileInput {
@@ -516,6 +529,11 @@ type User {
   lastname: String!
   profileId: ID
   userType: UserType
+}
+
+input UserListingFilter {
+  agentId: String
+  ownerId: String
 }
 
 """Various user types"""

@@ -1,5 +1,5 @@
 import { Arg, Authorized, Ctx, Mutation, Query } from "type-graphql";
-import { CreateListingInput, Listing, ListingFilterInput, UpdateListingInput } from "../schema/listing.schema";
+import { CreateListingInput, Listing, ListingFilterInput, UpdateListingInput, UserListingFilter } from "../schema/listing.schema";
 import ListingService from "../service/listing.service";
 import Context from "../types/context";
 
@@ -11,17 +11,17 @@ export default class ListingResolver {
 
     // @Authorized()
     @Mutation(() => Listing)
-    createListing(@Arg('userId') userId: string, @Arg('listing') listing: CreateListingInput){
+    createListing(@Arg('listing') listing: CreateListingInput){
         // const user = context.user
-        return this.listingService.createListing({ ...listing, agent: userId })
+        return this.listingService.createListing({ ...listing,})
     }
 
     // @Authorized()
     @Query(() => [Listing])
-    getUserListings(@Arg('userId') userId: string){
+    getUserListings(@Arg('filter') filter: UserListingFilter){
         // const user = context.user
         // const userId = user?._id ? user?._id : user?.sub
-        return this.listingService.getUserListings(userId)
+        return this.listingService.getUserListings(filter)
     }
 
     @Query(() => [Listing])

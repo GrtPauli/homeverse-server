@@ -109,6 +109,21 @@ export class IListingImage {
     uri: string
 }
 
+@ObjectType()
+class ListingParticipant {
+    @Field(() => String)
+    @prop({ required: true })
+    name: string
+
+    @Field(() => String)
+    @prop({ required: true })
+    id: string
+
+    @Field(() => String)
+    @prop({ required: true })
+    photo: string
+}
+
 @index({user: 1})
 @queryMethod(findByUserId)
 @ObjectType()
@@ -128,9 +143,21 @@ export class Listing {
     @prop({default: null})
     description: string
 
-    @Field(() => Location, {nullable: true})
+    @Field(() => String, {nullable: true})
     @prop({default: null})
-    location: Location
+    state: string
+
+    @Field(() => String, {nullable: true})
+    @prop({default: null})
+    city: string
+
+    @Field(() => String, {nullable: true})
+    @prop({default: null})
+    address: string
+
+    @Field(() => Number, {nullable: true})
+    @prop({default: null})
+    zip: number
 
     @Field(() => [IListingImage], {nullable: true})
     @prop({default: null})
@@ -140,13 +167,21 @@ export class Listing {
     @prop({default: null})
     yearBuilt: number
 
-    @Field(() => String, {nullable: true})
-    @prop({default: null})
-    owner: string
+    @Field(() => ListingParticipant, {nullable: true})
+    @prop({default: null, _id: false})
+    owner: ListingParticipant
+
+    @Field(() => ListingParticipant, {nullable: true})
+    @prop({default: null, _id: false})
+    agent: ListingParticipant
 
     @Field(() => String, {nullable: true})
     @prop({default: null})
-    agent: string
+    ownerId: string
+
+    @Field(() => String, {nullable: true})
+    @prop({default: null})
+    agentId: string
 
     @Field(() => ListingStatus, { nullable: true })
     @prop({default: ListingStatus.ACTIVE})
@@ -266,6 +301,18 @@ export const ListingModel = getModelForClass<typeof Listing, QueryHelpers>(Listi
 })
 
 @InputType()
+class ListingParticipantInput {
+    @Field(() => String)
+    name: string
+
+    @Field(() => String)
+    id: string
+
+    @Field(() => String)
+    photo: string
+}
+
+@InputType()
 export class IListingImageInput {
     @Field(() => String)
     id: string
@@ -288,8 +335,17 @@ export class CreateListingInput {
     @Field(() => String, {nullable: true})
     description: string
 
-    @Field(() => LocationInput, {nullable: true})
-    location: LocationInput
+    @Field(() => String, {nullable: true})
+    state: string
+
+    @Field(() => String, {nullable: true})
+    city: string
+
+    @Field(() => String, {nullable: true})
+    address: string
+
+    @Field(() => Number, {nullable: true})
+    zip: number
 
     @Field(() => [IListingImageInput], {nullable: true})
     photos: IListingImageInput[]
@@ -297,11 +353,17 @@ export class CreateListingInput {
     @Field(() => Number, {nullable: true})
     yearBuilt: number
 
-    @Field(() => String, {nullable: true})
-    owner: string
+    @Field(() => ListingParticipantInput, {nullable: true})
+    owner: ListingParticipantInput
+
+    @Field(() => ListingParticipantInput, {nullable: true})
+    agent: ListingParticipantInput
 
     @Field(() => String, {nullable: true})
-    agent: string
+    ownerId: string
+
+    @Field(() => String, {nullable: true})
+    agentId: string
 
     @Field(() => Number, { nullable: true })
     bedrooms: number
@@ -390,8 +452,17 @@ export class UpdateListingInput {
     @Field(() => String, {nullable: true})
     description: string
 
-    @Field(() => LocationInput, {nullable: true})
-    location: LocationInput
+    @Field(() => String, {nullable: true})
+    state: string
+
+    @Field(() => String, {nullable: true})
+    city: string
+
+    @Field(() => String, {nullable: true})
+    address: string
+
+    @Field(() => Number, {nullable: true})
+    zip: number
 
     @Field(() => [IListingImageInput], {nullable: true})
     photos: IListingImageInput[]
@@ -399,11 +470,17 @@ export class UpdateListingInput {
     @Field(() => Number, {nullable: true})
     yearBuilt: number
 
-    @Field(() => String, {nullable: true})
-    owner: string
+    @Field(() => ListingParticipantInput, {nullable: true})
+    owner: ListingParticipantInput
+
+    @Field(() => ListingParticipantInput, {nullable: true})
+    agent: ListingParticipantInput
 
     @Field(() => String, {nullable: true})
-    agent: string
+    ownerId: string
+
+    @Field(() => String, {nullable: true})
+    agentId: string
 
     @Field(() => ListingStatus, { nullable: true })
     status: ListingStatus
@@ -488,6 +565,15 @@ export class UpdateListingInput {
 export class GetListingInput {
     @Field(() => ID)
     listingId: string
+}
+
+@InputType()
+export class UserListingFilter {
+    @Field(() => String, {nullable: true})
+    ownerId: string
+
+    @Field(() => String, {nullable: true})
+    agentId: string
 }
 
 @InputType()
