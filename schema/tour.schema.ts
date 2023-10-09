@@ -15,10 +15,11 @@ export enum TourRequestStatus {
 }
 
 enum TourStatus {
-    COMPLETED,
-    PENDING,
-    CANCELLED,
-    REQUEST
+    REQUEST_PENDING,
+    REQUEST_CANCELLED,
+    TOUR_PENDING,
+    TOUR_CANCELLED,
+    TOUR_COMPLETED
 }
 
 registerEnumType(TourMethod, {

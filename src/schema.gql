@@ -151,6 +151,10 @@ input GenerateZegoTokenInput {
   userId: String!
 }
 
+input GetRentalsInput {
+  ownerId: String!
+}
+
 input GetTourInfoInput {
   agentId: String
   touristId: String
@@ -278,6 +282,7 @@ type Mutation {
   addNewComment(comment: CommentInput!): Boolean!
   createListing(listing: CreateListingInput!): Listing!
   createProfile(userId: String!): Profile!
+  createRental(rental: RentalInput!): Rental!
   createTour(tour: CreateTourInput!): Tour!
   createTourRequest(request: CreateTourRequestInput!): TourRequest!
   createUser(user: CreateUserInput!): User!
@@ -287,6 +292,7 @@ type Mutation {
   sendMessage(message: SendMessageInput!): Boolean!
   updateListing(id: String!, listing: UpdateListingInput!): Listing!
   updateProfile(id: String!, profile: UpdateProfileInput!): Boolean!
+  updateRental(id: String!, rental: RentalInput!): Rental!
   updateTour(id: String!, tour: UpdateTourInput!): Tour!
   updateTourRequestStatus(id: String!, request: UpdateTourRequestStatusInput!, vcRoomId: String): TourRequest!
   updateUser(user: UpdateUserInput!): User!
@@ -336,6 +342,7 @@ type Query {
   getUser(id: String!): User!
   getUserListings(filter: UserListingFilter!): [Listing!]!
   getUserProfile(id: String!): Profile!
+  getUserRentals(input: GetRentalsInput!): [Rental!]!
   homePage: HomePage!
   recipe(id: ID!): Recipe
   sendOTP(number: String!): String!
@@ -347,6 +354,31 @@ type Recipe {
   description: String
   id: ID!
   title: String!
+}
+
+type Rental {
+  _id: ID!
+  address: String!
+  city: String!
+  createdAt: Timestamp!
+  creationStep: Float!
+  creationSubStep: Float!
+  homeType: String!
+  ownerId: String!
+  state: String!
+  updatedAt: Timestamp!
+  zip: Float!
+}
+
+input RentalInput {
+  address: String!
+  city: String!
+  creationStep: Float!
+  creationSubStep: Float!
+  homeType: String!
+  ownerId: String!
+  state: String!
+  zip: Float!
 }
 
 type Review {
@@ -431,10 +463,11 @@ enum TourRequestStatus {
 
 """Representing the status of a tour"""
 enum TourStatus {
-  CANCELLED
-  COMPLETED
-  PENDING
-  REQUEST
+  REQUEST_CANCELLED
+  REQUEST_PENDING
+  TOUR_CANCELLED
+  TOUR_COMPLETED
+  TOUR_PENDING
 }
 
 input UpdateListingInput {

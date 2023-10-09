@@ -6,6 +6,7 @@ import MessageResolver from "./message.resolver";
 import ContactResolver from "./contact.resolver";
 import GeneralResolver from "./general.resolver";
 import TourResolver from "./tour.resolver";
+import RentalResolver from "./rental.resolver";
 
 export const resolvers = [
     UserResolver, 
@@ -15,5 +16,6 @@ export const resolvers = [
     ContactResolver,
     GeneralResolver,
     RecipeResolver,
-    TourResolver
+    TourResolver,
+    RentalResolver
 ] as const
